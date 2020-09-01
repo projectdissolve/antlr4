@@ -1,0 +1,24 @@
+parameters:
+  - name: package_name
+    default: 'antlr4-cpp-runtime-osx'
+
+steps:
+  - checkout: self
+  - bash: |
+      brew install ninja
+    displayName: 'Install Prerequisites'
+  - bash: |
+      set -ex
+      cd runtime/Cpp
+      mkdir build
+      cd build
+      cmake ../ -G Ninja -DCMAKE_BUILD_TYPE=Release -DANTLR4_INSTALL:bool=true -DCMAKE_INSTALL_PREFIX:path=$(System.DefaultWorkingDirectory)/${{ parameters.package_name }}
+      ninja install
+    displayName: 'Build / Install'
+  - bash: |
+      set -ex
+      cd $(System.DefaultWorkingDirectory)
+      zip -9rv ${{ parameters.package_name }}.zip ${{ parameters.package_name }}/
+      mkdir archives
+      mv ${{ parameters.package_name }}.zip archives/
+    displayName: 'Create Assets'

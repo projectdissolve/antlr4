@@ -1,0 +1,74 @@
+trigger:
+  - master
+
+pr: none
+
+stages:
+  # Build and Package Library
+  - stage: 'build'
+    displayName: 'Build and Package'
+    jobs:
+      - job: 'linux'
+        displayName: 'Build Linux (ubuntu-18.04)'
+        pool:
+          vmImage: 'ubuntu-18.04'
+        steps:
+          - template: templates/build-linux.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "archives/"
+              ArtifactName: 'linux-artifacts'
+            displayName: 'Publish Linux Artifacts'
+      - job: 'osx'
+        displayName: 'Build OSX (macos-latest)'
+        pool:
+          vmImage: 'macos-latest'
+        steps:
+          - template: templates/build-osx.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "archives/"
+              ArtifactName: 'osx-artifacts'
+            displayName: 'Publish OSX Artifacts'
+      - job: 'windows'
+        displayName: 'Build Windows (windows-latest)'
+        pool:
+          vmImage: 'windows-latest'
+        condition: eq(0,1)
+        steps:
+          - template: templates/build-windows.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "archives/"
+              ArtifactName: 'windows-artifacts'
+            displayName: 'Publish Windows Artifacts'
+
+  # Deploy
+  - stage: 'deploy'
+    displayName: 'Deploy'
+    jobs:
+      - job: 'continuous_gh'
+        displayName: 'Create Continuous Release (GH)'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - checkout: self
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'linux-artifacts'
+            displayName: 'Download Linux Artifacts'
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'osx-artifacts'
+            displayName: 'Download OSX Artifacts'
+          - bash: |
+              SHORTHASH=`git rev-parse --short HEAD`
+              DATE=`date`
+              ./ci/scripts/update-release -r projectdissolve/antlr4 -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`master\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*zip
+            displayName: 'Update Continuous Release'

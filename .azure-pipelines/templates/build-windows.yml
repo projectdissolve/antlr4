@@ -1,0 +1,39 @@
+parameters:
+  - name: package_name
+    default: 'antlr4-cpp-runtime-windows'
+
+steps:
+  - checkout: self
+  - script: |
+      choco install -y zip ninja
+    displayName: 'Install Prerequisites'
+  - script: |
+      choco install mingw --version=7.3.0 --allow-downgrade
+      cmake --version
+      choco install -y cmake
+      cmake --version
+    displayName: 'Downgrade MinGW'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      cd runtime/Cpp
+      mkdir build
+      cd build
+      cmake ../ -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DANTLR4_INSTALL:bool=true -DCMAKE_INSTALL_PREFIX:path=../dist
+      ninja
+    displayName: 'Build'
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      cd runtime/cpp
+      mkdir ${{ parameters.package_name }}
+      cd ${{ parameters.package_name }}
+      mkdir include lib lib64 lib64/cmake lib64/cmake/antlr4-runtime
+      # Includes
+      Copy-Item -Path ../runtime/src -Destination include/antlr4-runtime -Recurse -Exclude *.cpp
+      
+    displayName: 'Fake Install'
+  - powershell: |
+      cd runtime/Cpp
+      zip -r ${{ parameters.package_name }}.zip ${{ parameters.package_name }}
+      mkdir archives
+      mv ${{ parameters.package_name }}.zip archives
+    displayName: 'Create Assets'
