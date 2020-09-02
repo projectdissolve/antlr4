@@ -71,4 +71,6 @@ stages:
               SHORTHASH=`git rev-parse --short HEAD`
               DATE=`date`
               ./ci/scripts/update-release -r projectdissolve/antlr4 -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`master\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*zip
+            env:
+              GITHUB_TOKEN: $(REPO_SECRET)
             displayName: 'Update Continuous Release'
