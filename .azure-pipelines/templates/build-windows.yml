@@ -18,7 +18,7 @@ steps:
       cd runtime/Cpp
       mkdir build
       cd build
-      cmake ../ -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DANTLR4_INSTALL:bool=true -DCMAKE_INSTALL_PREFIX:path=$(System.DefaultWorkingDirectory)/${{ parameters.package_name }}
+      cmake ../ -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DANTLR4_INSTALL:bool=true -DCMAKE_INSTALL_PREFIX:path=../${{ parameters.package_name }}
       ninja install
     displayName: 'Build'
   - powershell: |
