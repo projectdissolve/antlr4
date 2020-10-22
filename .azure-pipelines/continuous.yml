@@ -34,7 +34,6 @@ stages:
         displayName: 'Build Windows (windows-latest)'
         pool:
           vmImage: 'windows-latest'
-        condition: eq(1,1)
         steps:
           - template: templates/build-windows.yml
           - task: PublishBuildArtifacts@1
@@ -67,10 +66,17 @@ stages:
               downloadType: 'single'
               artifactName: 'osx-artifacts'
             displayName: 'Download OSX Artifacts'
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'windows-artifacts'
+            displayName: 'Download Windows Artifacts'
           - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
               DATE=`date`
-              ./ci/scripts/update-release -r projectdissolve/antlr4 -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`master\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*zip
+              ./ci/scripts/update-release -r projectdissolve/antlr4 -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`master\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*zip $(System.ArtifactsDirectory)/windows-artifacts/*zip
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
             displayName: 'Update Continuous Release'
