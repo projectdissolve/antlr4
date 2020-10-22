@@ -34,7 +34,7 @@ stages:
         displayName: 'Build Windows (windows-latest)'
         pool:
           vmImage: 'windows-latest'
-        condition: eq(0,1)
+        condition: eq(1,1)
         steps:
           - template: templates/build-windows.yml
           - task: PublishBuildArtifacts@1

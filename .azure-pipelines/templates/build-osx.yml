@@ -1,6 +1,6 @@
 parameters:
   - name: package_name
-    default: 'antlr4-cpp-runtime-osx'
+    default: 'antlr4-cpp-runtime'
 
 steps:
   - checkout: self
@@ -18,7 +18,7 @@ steps:
   - bash: |
       set -ex
       cd $(System.DefaultWorkingDirectory)
-      zip -9rv ${{ parameters.package_name }}.zip ${{ parameters.package_name }}/
+      zip -9rv ${{ parameters.package_name }}-osx.zip ${{ parameters.package_name }}/
       mkdir archives
-      mv ${{ parameters.package_name }}.zip archives/
+      mv ${{ parameters.package_name }}-osx.zip archives/
     displayName: 'Create Assets'

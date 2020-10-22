@@ -1,6 +1,6 @@
 parameters:
   - name: package_name
-    default: 'antlr4-cpp-runtime-windows'
+    default: 'antlr4-cpp-runtime'
 
 steps:
   - checkout: self
@@ -33,7 +33,7 @@ steps:
     displayName: 'Fake Install'
   - powershell: |
       cd runtime/Cpp
-      zip -r ${{ parameters.package_name }}.zip ${{ parameters.package_name }}
+      zip -r ${{ parameters.package_name }}-windows.zip ${{ parameters.package_name }}
       mkdir archives
-      mv ${{ parameters.package_name }}.zip archives
+      mv ${{ parameters.package_name }}-windows.zip archives
     displayName: 'Create Assets'
