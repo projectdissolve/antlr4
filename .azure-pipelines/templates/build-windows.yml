@@ -22,21 +22,8 @@ steps:
       ninja install
     displayName: 'Build'
   - powershell: |
-      $ErrorActionPreference = 'Stop'
-      cd runtime/cpp
-      mkdir ${{ parameters.package_name }}2
-      cd ${{ parameters.package_name }}2
-      mkdir include
-      mkdir lib
-      mkdir lib64
-      mkdir lib64/cmake/antlr4-runtime
-      # Includes
-      Copy-Item -Path ../runtime/src -Destination include/antlr4-runtime -Recurse -Exclude *.cpp
-      
-    displayName: 'Fake Install'
-  - powershell: |
       cd runtime/Cpp
       zip -r ${{ parameters.package_name }}-windows.zip ${{ parameters.package_name }}
-      mkdir archives
-      mv ${{ parameters.package_name }}-windows.zip archives
+      mkdir $(System.DefaultWorkingDirectory)/archives
+      mv ${{ parameters.package_name }}-windows.zip $(System.DefaultWorkingDirectory)/archives
     displayName: 'Create Assets'
