@@ -70,7 +70,15 @@ namespace atn {
   ///
   /// <embed src="images/OptionalNonGreedy.svg" type="image/svg+xml"/>
   /// </summary>
+
+// Patch imported from https://github.com/antlr/antlr4/pull/2773/
+// GCC generates a warning here if ATN has already been declared due to the
+// attributes added by ANTLR4CPP_PUBLIC.
+// See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=39159
+// Only forward-declare if it hasn't already been declared.
+#ifndef ANTLR4CPP_ATN_DECLARED
   class ANTLR4CPP_PUBLIC ATN;
+#endif
 
   class ANTLR4CPP_PUBLIC ATNState {
   public:
