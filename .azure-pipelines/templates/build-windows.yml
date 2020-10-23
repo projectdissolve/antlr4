@@ -7,12 +7,6 @@ steps:
   - script: |
       choco install -y zip ninja
     displayName: 'Install Prerequisites'
-  - script: |
-      choco install mingw --version=7.3.0 --allow-downgrade
-      cmake --version
-      choco install -y cmake
-      cmake --version
-    displayName: 'Downgrade MinGW'
   - powershell: |
       $ErrorActionPreference = 'Stop'
       cd runtime/Cpp
