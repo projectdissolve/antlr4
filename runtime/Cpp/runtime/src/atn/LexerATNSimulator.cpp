@@ -31,8 +31,9 @@ using namespace antlr4;
 using namespace antlr4::atn;
 using namespace antlrcpp;
 
-LexerATNSimulator::SimState::~SimState() {
-}
+// Removed by TGAY 10/2020 (now defined in header)
+// Fixes 'undefined reference to `antlr4::atn::LexerATNSimulator::SimState::~SimState()' on Windows
+// LexerATNSimulator::SimState::~SimState() { }
 
 void LexerATNSimulator::SimState::reset() {
   index = INVALID_INDEX;

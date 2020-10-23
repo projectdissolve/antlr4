@@ -17,7 +17,9 @@ namespace atn {
   protected:
     class SimState {
     public:
-      virtual ~SimState();
+      // Modified by TGAY 10/2020
+      // Fixes 'undefined reference to `antlr4::atn::LexerATNSimulator::SimState::~SimState()' on Windows
+      virtual ~SimState() { };
 
     protected:
       size_t index;
